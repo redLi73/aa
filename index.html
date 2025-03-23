@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ja" id="top">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>クラブ＆バー</title>
+  <!-- Google Fonts（Noto Serif JP, Playfair Display, Cormorant Garamond）読み込みは省略 or 必要に応じて追加 -->
+
+  <style>
+    /* ===== 既存のコードはそのまま。指示された箇所のみ変更 ===== */
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: #1a1a1a;
+      color: #FFFFFF;
+      /* もともと Noto Serif JP と Playfair Display を想定しているが、
+         ここでは全体のフォント設定を維持し、タイトルだけ後で上書きする */
+      font-family: "Noto Serif JP","Playfair Display",serif;
+      overflow-x: hidden;
+    }
+
+    /* ▼ 変更箇所1: ページ左上の「BARRR」ロゴ
+       - ロゴの中心がページ上端から 6.5dvh
+       - ロゴ文字の縦幅 3dvh
+       - フォントは Cormorant Garamond
+    */
+    .title {
+      position: absolute;
+      /* 中心を 6.5dvh にしたい → top = 6.5dvh - (文字サイズの半分)
+         文字サイズは 3dvh → 半分 = 1.5dvh
+         よって top: calc(6.5dvh - 1.5dvh) = 5dvh
+      */
+      top: calc(6.5dvh - 1.5dvh);
+      left: 2vw;
+      font-size: 3dvh;
+      /* フォントを Cormorant Garamond に上書き */
+      font-family: "Cormorant Garamond", serif;
+      color: #FFFFFF;
+      z-index: 100;
+    }
+
+    .hamburger {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 18vw;
+      height: 18vw;
+      background: transparent;
+      z-index: 999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .hamburger-lines {
+      width: 50%;
+      height: 50%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* ▼ 変更箇所2: ハンバーガーメニューの線をすべて 2px に */
+    .hamburger-lines span {
+      display: block;
+      width: 100%;
+      height: 2px; /* 6px → 2px に変更 */
+      background: #FFFFFF;
+    }
+
+    #menu {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0,0,0,0.95);
+      z-index: 1000;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #menu a {
+      color: #FFFFFF;
+      font-size: 2rem;
+      text-decoration: none;
+      margin: 15px 0;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: #FFFFFF;
+      font-size: 3rem;
+      cursor: pointer;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100vw;
+      height: 18vw;
+      background: #1a1a1a;
+      z-index: 999;
+    }
+
+    .top-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: #363636;
+    }
+
+    .divider {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 82vw;
+      width: 1px;
+      background: #363636;
+    }
+
+    .reserve-btn {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 82vw;
+      height: 18vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #FFFFFF;
+      font-size: 5vw;
+    }
+
+    .instagram-btn {
+      position: absolute;
+      top: 0;
+      left: 82vw;
+      width: 18vw;
+      height: 18vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #FFFFFF;
+      font-size: 5vw;
+    }
+
+    .scroll-container {
+      position: absolute;
+      top: 13dvh;
+      left: 0;
+      width: 100vw;
+      height: 62dvh;
+      overflow: hidden;
+      z-index: 50;
+    }
+
+    .scroll-track {
+      display: flex;
+      animation: scroll-left 60s linear infinite;
+    }
+
+    .scroll-image {
+      flex-shrink: 0;
+      width: 100vw;
+      height: 62dvh;
+      margin-right: 3vw;
+      background-size: cover;
+      background-position: center;
+    }
+
+    @keyframes scroll-left {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-412vw); }
+    }
+
+    .ranking {
+      position: absolute;
+      top: 100dvh;
+      left: 5vw;
+      width: 55vw;
+      height: 25vw;
+      background: #000000;
+      padding: 10px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .ranking h2 {
+      margin: 0 0 10px 0;
+      font-size: 1.5rem;
+      color: #FFFFFF;
+    }
+
+    .ranking .rank-list {
+      font-size: 1rem;
+      color: #FFFFFF;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .rank-list li {
+      margin: 5px 0;
+    }
+
+    .game-btn-abs {
+      position: absolute;
+      top: 100dvh;
+      right: 5vw;
+      width: 25vw;
+      height: 25vw;
+      background: #000000;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .game-btn-abs span {
+      color: #FFFFFF;
+      font-size: 1.5rem;
+    }
+
+    .news-abs {
+      position: absolute;
+      left: 5vw;
+      right: 5vw;
+      top: calc(100dvh + 25vw + 20vh);
+      background: #000000;
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .news-abs h2 {
+      margin: 0 0 10px 0;
+      font-size: 1.5rem;
+      color: #FFFFFF;
+    }
+
+    .footer-abs {
+      position: absolute;
+      top: calc(100dvh + 25vw + 20vh + 20vw + 25vw);
+      width: 100vw;
+      background: #1a1a1a;
+      text-align: center;
+      color: #FFFFFF;
+      padding: 10px;
+      margin-bottom: 25vw;
+      position: relative;
+    }
+
+    .footer-abs p {
+      margin: 10px 0;
+    }
+
+    .footer-top-line {
+      position: absolute;
+      top: 0;
+      left: 4vw;
+      right: 4vw;
+      height: 1px;
+      background: #363636;
+    }
+
+    .logo {
+      position: absolute;
+      top: 44dvh;
+      left: 50vw;
+      width: 34vw;
+      height: 34vw;
+      transform: translate(-50%, -50%);
+      background: url('logo.png') no-repeat center/cover;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body id="top">
+
+  <div class="title">BARRR</div>
+
+  <div class="hamburger" onclick="openMenu()">
+    <div class="hamburger-lines">
+      <!-- 線をすべて2pxに -->
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+
+  <nav id="menu">
+    <span class="close-btn" onclick="closeMenu()">×</span>
+    <a href="#top" onclick="closeMenu()">TOP</a>
+    <a href="#">ABOUT</a>
+    <a href="#">ACCESS</a>
+  </nav>
+
+  <div class="bottom-nav">
+    <div class="top-line"></div>
+    <div class="divider"></div>
+    <div class="reserve-btn">予約</div>
+    <div class="instagram-btn">I</div>
+  </div>
+
+  <div class="scroll-container">
+    <div class="scroll-track">
+      <div class="scroll-image" style="background-image: url('bar-bg.png');"></div>
+      <div class="scroll-image" style="background-image: url('club-bg.png');"></div>
+      <div class="scroll-image" style="background-image: url('sample1.png');"></div>
+      <div class="scroll-image" style="background-image: url('sample2.png');"></div>
+      <div class="scroll-image" style="background-image: url('bar-bg.png');"></div>
+    </div>
+  </div>
+
+  <div class="ranking">
+    <h2>Ranking</h2>
+    <ul class="rank-list">
+      <li>1位 ○○</li>
+      <li>2位 △△</li>
+      <li>3位 □□</li>
+    </ul>
+  </div>
+
+  <div class="game-btn-abs">
+    <span>Game</span>
+  </div>
+
+  <div class="news-abs">
+    <h2>News</h2>
+    <p>ここにニュースの内容</p>
+  </div>
+
+  <div class="footer-abs">
+    <div class="footer-top-line"></div>
+    <p>5/25(金)　10:00～12:00</p>
+    <p>13:00～15:00</p>
+    <p>5/25(金)　10:00～12:00</p>
+    <p>13:00～15:00</p>
+    <p>@4-3</p>
+    <p>URLをコピー</p>
+  </div>
+
+  <div class="logo"></div>
+
+  <script>
+    function openMenu() {
+      document.getElementById('menu').style.display = 'flex';
+    }
+    function closeMenu() {
+      document.getElementById('menu').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
